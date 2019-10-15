@@ -72,7 +72,7 @@ private:
 	char get_next_char();
 	char get_curr_char() const { return *pos; }
 
-	bool TEST_int(long long int n) { return (n >= INT_MIN) && (n <= INT_MAX); }
+	bool test_int(long long int n) { return (n >= INT_MIN) && (n <= INT_MAX); }
 };
 
 int calc::eval(const char* s) {	
@@ -94,14 +94,14 @@ int calc::eval_sum_sub() {
 		switch (get_next_token()) {
 		case ADD:
 			res += eval_mul_div();			
-			if (!TEST_int(res)) {
+			if (!test_int(res)) {
 				state = STATE_OVERFLOW;
 				return 0;
 			}
 			break;
 		case SUB:
 			res -= eval_mul_div();			
-			if (!TEST_int(res)) {
+			if (!test_int(res)) {
 				state = STATE_OVERFLOW;
 				return 0;
 			}
@@ -124,7 +124,7 @@ int calc::eval_mul_div() {
 		switch (int token=get_next_token()) {
 		case MUL:			
 			res *= eval_neg_number();			
-			if (!TEST_int(res)) {
+			if (!test_int(res)) {
 				state = STATE_OVERFLOW;
 				return 0;
 			}
@@ -139,7 +139,7 @@ int calc::eval_mul_div() {
 				return 0;
 			}
 			res /= divisor;
-			if (!TEST_int(res)) {
+			if (!test_int(res)) {
 				state = STATE_OVERFLOW;
 				return 0;
 			}
