@@ -7,9 +7,9 @@
 	int N_FAILED_TESTS = 0; 
 
 #define TEST(c)  do { \
-	N_TESTS++; \
+    N_TESTS++; \
     if (!(c)) { \
-		N_FAILED_TESTS++; \
+	N_FAILED_TESTS++; \
         std::cerr << "Test " << #c << " failed in " << __FILE__ \
                   << "(line " << __LINE__ << ") : " << std::endl; \
 	} \
@@ -246,7 +246,7 @@ char calc::get_next_char() {
 void test() {
 	TESTS_BEGIN
 	calc c;
-	//дважды два четыре
+	//РґРІР°Р¶РґС‹ РґРІР° С‡РµС‚С‹СЂРµ
 	TEST((c.eval("2*2") == 4) && (c.get_state() == STATE_OK))
 	TEST((c.eval("2+2") == 4) && (c.get_state() == STATE_OK))
 	TEST((c.eval("2-2") == 0) && (c.get_state() == STATE_OK))
@@ -261,22 +261,22 @@ void test() {
 	TEST((c.eval(" 12345679   * 8 ") == 98765432) && (c.get_state() == STATE_OK))
 	TEST((c.eval(" 256  * 256 * 256 ") == 16777216) && (c.get_state() == STATE_OK))
 	TEST((c.eval(" - 256  * - 256 * -256 ") == -16777216) && (c.get_state() == STATE_OK))
-	//деление на 0
+	//РґРµР»РµРЅРёРµ РЅР° 0
 	TEST((c.eval(" 1+2*3/4-5*6+7*9/0 ") == 0) && (c.get_state() == STATE_DIVISION_BY_ZERO))
-	//переполнение
+	//РїРµСЂРµРїРѕР»РЅРµРЅРёРµ
 	TEST((c.eval(" 256 * 256 * 256 * 256 ") == 0) && (c.get_state() == STATE_OVERFLOW))
 	TEST((c.eval("-2147483647 - 1 -1") == 0) && (c.get_state() == STATE_OVERFLOW))
 	TEST((c.eval("-2147483648/ - 1") == 0) && (c.get_state() == STATE_OVERFLOW))
 	TEST((c.eval("-2147483648 * - 1") == 0) && (c.get_state() == STATE_OVERFLOW))
 	TEST((c.eval("2147483648") == 0) && (c.get_state() == STATE_OVERFLOW))
-	//два унарных минуса не допускаются
+	//РґРІР° СѓРЅР°СЂРЅС‹С… РјРёРЅСѓСЃР° РЅРµ РґРѕРїСѓСЃРєР°СЋС‚СЃСЏ
 	TEST((c.eval(" - 256  * - 256 * -  -  256 ") == 0) && (c.get_state() == STATE_NUMBER_EXPECTED))
-	//унарный плюс не допускается
+	//СѓРЅР°СЂРЅС‹Р№ РїР»СЋСЃ РЅРµ РґРѕРїСѓСЃРєР°РµС‚СЃСЏ
 	TEST((c.eval(" - 256  * - 256 * + 256 ") == 0) && (c.get_state() == STATE_UNEXPECTED_CHAR))
 	TEST((c.eval(" -256 - + 256 ") == 0) && (c.get_state() == STATE_UNEXPECTED_CHAR))
-	//получим INT_MIN
+	//РїРѕР»СѓС‡РёРј INT_MIN
 	TEST((c.eval("-2147483647 - 1") == INT_MIN) && (c.get_state() == STATE_OK))
-	//неправильно составленные выражения
+	//РЅРµРїСЂР°РІРёР»СЊРЅРѕ СЃРѕСЃС‚Р°РІР»РµРЅРЅС‹Рµ РІС‹СЂР°Р¶РµРЅРёСЏ
 	TEST((c.eval(nullptr) == 0) && (c.get_state() == STATE_NULLPTR))
 	TEST((c.eval("") == 0) && (c.get_state() == STATE_UNEXPECTED_CHAR))
 	TEST((c.eval("         ") == 0) && (c.get_state() == STATE_UNEXPECTED_CHAR))
@@ -289,7 +289,7 @@ void test() {
 	TEST((c.eval("  1**1   ") == 0) && (c.get_state() == STATE_UNEXPECTED_CHAR))
 	TEST((c.eval("  1//1   ") == 0) && (c.get_state() == STATE_UNEXPECTED_CHAR))
 	TEST((c.eval("  a   ") == 0) && (c.get_state() == STATE_UNEXPECTED_CHAR))
-	TESTS_END	
+	TESTS_END
 }
 int main(int argc,char* argv[]) {
 	if (argc > 1) {
