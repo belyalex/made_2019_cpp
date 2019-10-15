@@ -46,7 +46,7 @@ const char* messages[] = {
 	"Expression is nullptr",
 	"Unexpected end of expression",
 	"Unexpected character",
-	"int type îverflow",
+	"int type overflow",
 	"Number expected",
 	"Division by zero",
 };
