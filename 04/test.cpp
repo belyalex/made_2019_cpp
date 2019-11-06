@@ -112,6 +112,15 @@ void Test3() {
 	TESTS_END
 }
 
+void Test4() {
+	const size_t rows = 5;
+	const size_t cols = 3;
+	const Matrix m(rows, cols);
+	//Если раскомментировать следующие строки, не пройдёт компиляция - попытка изменить константную матрицу.
+	//m[4][2]=1;
+	//m*=2;
+}
+
 void TestAll() {
 	Test0();
 
@@ -120,6 +129,8 @@ void TestAll() {
 	Test2();
 
 	Test3();
+
+	Test4();
 }
 
 int main() {

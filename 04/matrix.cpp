@@ -5,7 +5,7 @@ Matrix::Matrix(size_t rows, size_t cols):
 	rows(rows),
 	cols(cols)
 {
-	buf = new int[rows * cols]{ 0 };	
+	buf = new int[rows * cols]();	
 }
 
 bool Matrix::operator==(const Matrix& m) const
@@ -26,7 +26,17 @@ Matrix& Matrix::operator*=(const int x)
 	return *this;
 }
 
-Matrix::ProxyRow Matrix::operator[](const size_t row) const
+const Matrix::ProxyRow Matrix::operator[](const size_t row) const
+{
+	if (row >= rows) {
+	    throw std::out_of_range("");
+	}
+
+	const ProxyRow pr(&buf[row * cols],cols);
+	return pr;
+}
+
+Matrix::ProxyRow Matrix::operator[](const size_t row)
 {
 	if (row >= rows) {
 	    throw std::out_of_range("");
@@ -36,7 +46,16 @@ Matrix::ProxyRow Matrix::operator[](const size_t row) const
 	return pr;
 }
 
-int& Matrix::ProxyRow::operator[](const size_t col) const
+int Matrix::ProxyRow::operator[](const size_t col) const
+{
+	if (col >= cols) {
+	    throw std::out_of_range("");
+	}
+
+	return buf[col];
+}
+
+int& Matrix::ProxyRow::operator[](const size_t col)
 {
 	if (col >= cols) {
 	    throw std::out_of_range("");
