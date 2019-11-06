@@ -117,8 +117,15 @@ void Test4() {
 	const size_t cols = 3;
 	const Matrix m(rows, cols);
 	//Если раскомментировать следующие строки, не пройдёт компиляция - попытка изменить константную матрицу.
-	//m[4][2]=1;
-	//m*=2;
+	//m[4][2]=1; //попытка присваивания элементу матрицы
+	//m*=2;      //попытка умножения на число
+	TESTS_BEGIN("cost Matrix tests")
+	    for (int i = 0; i < m.getRows(); i++) {
+		for (int j = 0; j < m.getColumns(); j++) {
+		    TEST(m[i][j] == 0); //получение элементов матрицы работает
+		}
+	    }
+	TESTS_END
 }
 
 void TestAll() {
