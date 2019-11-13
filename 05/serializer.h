@@ -11,8 +11,6 @@ enum class Error
 	CorruptedArchive
 };
 
-namespace made {
-
 class Serializer
 {
 private:	
@@ -33,18 +31,20 @@ public:
 	template <class... ArgsT>
 	Error operator()(ArgsT&&... args)
 	{
-		return process(std::forward<ArgsT>(args)...);
+		return process(std::forward<ArgsT&&>(args)...);
 	}
 private:
-	template<class T>
-	Error save_value(T val) {
-		return ((out << val << Separator) ? Error::NoError : Error::CorruptedArchive);
+	Error save_value(bool val) {
+		return (out << (val ? "true" : "false") << Separator) ? Error::NoError : Error::CorruptedArchive;
 	}
 	
+	Error save_value(uint64_t val) {
+		return (out << val << Separator) ? Error::NoError : Error::CorruptedArchive;
+	}
 	template<class T>
 	Error process(T&& val)
 	{
-		return save_value(val);		
+		return save_value(val);			
 	}
 
 	template<class T, class... ArgsT>
@@ -52,7 +52,7 @@ private:
 	{
 		Error res = save_value(val);
 		if (res != Error::NoError) return res;
-		return process(std::forward<ArgsT>(args)...);
+		return process(std::forward<ArgsT&&>(args)...);
 	}
 };
 
@@ -73,57 +73,48 @@ public:
 	}
 
 	template <class... ArgsT>
-	Error operator()(ArgsT&&... args)
+	Error operator()(ArgsT&... args)
 	{
-		return process(std::forward<ArgsT>(args)...);
+		return process(std::forward<ArgsT&>(args)...);
 	}
 
 private:
-	template<class T>
-	Error load_value(T& val) {
+	Error load_value(bool& val) {
+		std::string text;
+		in >> text;
+		if (text == "true")
+			val = true;
+		else if (text == "false")
+			val = false;
+		else
+			return Error::CorruptedArchive;
+
+		return Error::NoError;
+	}
+	
+	Error load_value(uint64_t& val) {
 		if (in >> val)
 			return Error::NoError;
 		else
 			return Error::CorruptedArchive;
-	};
+	}
 
 	template<class T>
-	Error process(T&& val)
+	Error process(T& val)
 	{
-		return load_value<T&&>(val);
+		return load_value(val);
 	}
 	template<class T, class... ArgsT>
-	Error process(T&& val, ArgsT&&... args)
+	Error process(T& val, ArgsT&... args)
 	{
-		Error res=load_value<T&&>(val);
+		Error res=load_value(val);
 
 		if (res != Error::NoError) return res;
 
-		return process(std::forward<ArgsT>(args)...);
+		return process(std::forward<ArgsT&>(args)...);
 	}	
 	
 };
 
-template<>
-Error Serializer::save_value<bool>(bool val)
-{
-	return ((out << (val ? "true" : "false") << Separator)? Error::NoError : Error::CorruptedArchive);		
-}
-
-template<>
-Error Deserializer::load_value<bool&>(bool& val)
-{
-	std::string text;
-	in >> text;
-	if (text == "true")
-		val = true;
-	else if (text == "false")
-		val = false;
-	else
-		return Error::CorruptedArchive;
-
-	return Error::NoError;
-	}
-}
 
 #endif

@@ -24,8 +24,6 @@
 #define TESTS_END \
 	std::cout << "Failed " << N_FAILED_TESTS << " from " << N_TESTS << " tests." << std::endl << std::endl;
 
-using namespace made;
-
 struct Data
 {
 	uint64_t a;
