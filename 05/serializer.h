@@ -31,28 +31,32 @@ public:
 	template <class... ArgsT>
 	Error operator()(ArgsT&&... args)
 	{
-		return process(std::forward<ArgsT&&>(args)...);
+		return process(std::forward<ArgsT>(args)...);
 	}
 private:
-	Error save_value(bool val) {
-		return (out << (val ? "true" : "false") << Separator) ? Error::NoError : Error::CorruptedArchive;
+	template <class T>
+	Error save_value(T&& val) {
+		if constexpr (std::is_same<T, bool>::value || std::is_same<T, bool&>::value) { 
+			return (out << std::boolalpha << val << Separator) ? Error::NoError : Error::CorruptedArchive;
+		}
+		if constexpr (std::is_same<T, uint64_t>::value || std::is_same<T, uint64_t&>::value) {
+			return (out << val << Separator) ? Error::NoError : Error::CorruptedArchive;
+		}
+		return Error::CorruptedArchive;
 	}
-	
-	Error save_value(uint64_t val) {
-		return (out << val << Separator) ? Error::NoError : Error::CorruptedArchive;
-	}
+
 	template<class T>
 	Error process(T&& val)
 	{
-		return save_value(val);			
+		return save_value(std::forward<T>(val));			
 	}
 
 	template<class T, class... ArgsT>
 	Error process(T&& val, ArgsT&&... args)
 	{
-		Error res = save_value(val);
+		Error res = save_value(std::forward<T>(val));
 		if (res != Error::NoError) return res;
-		return process(std::forward<ArgsT&&>(args)...);
+		return process(std::forward<ArgsT>(args)...);
 	}
 };
 
@@ -73,45 +77,49 @@ public:
 	}
 
 	template <class... ArgsT>
-	Error operator()(ArgsT&... args)
+	Error operator()(ArgsT&&... args)
 	{
-		return process(std::forward<ArgsT&>(args)...);
+		return process(std::forward<ArgsT>(args)...);
 	}
 
 private:
-	Error load_value(bool& val) {
-		std::string text;
-		in >> text;
-		if (text == "true")
-			val = true;
-		else if (text == "false")
-			val = false;
-		else
-			return Error::CorruptedArchive;
+	template <class T>
+	Error load_value(T&& val) {
+		if constexpr (std::is_same<T, bool>::value || std::is_same<T, bool&>::value) { 	
+			std::string text;
+			in >> text;
+			if (text == "true")
+				val = true;
+			else if (text == "false")
+				val = false;
+			else
+				return Error::CorruptedArchive;
 
-		return Error::NoError;
+			return Error::NoError;
+
+		}
+		if constexpr (std::is_same<T, uint64_t>::value || std::is_same<T, uint64_t&>::value) {
+			if (in >> val)
+				return Error::NoError;
+			else
+				return Error::CorruptedArchive;
+		}
+		return Error::CorruptedArchive;
 	}
 	
-	Error load_value(uint64_t& val) {
-		if (in >> val)
-			return Error::NoError;
-		else
-			return Error::CorruptedArchive;
-	}
-
 	template<class T>
-	Error process(T& val)
+	Error process(T&& val)
 	{
-		return load_value(val);
+		return load_value(std::forward<T>(val));
 	}
 	template<class T, class... ArgsT>
-	Error process(T& val, ArgsT&... args)
+	Error process(T&& val, ArgsT&&... args)
 	{
-		Error res=load_value(val);
+		Error res=load_value(std::forward<T>(val));
 
 		if (res != Error::NoError) return res;
 
-		return process(std::forward<ArgsT&>(args)...);
+		return process(std::forward<ArgsT>(args)...);
 	}	
 	
 };

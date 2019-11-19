@@ -85,9 +85,12 @@ void Test1() {
 		TEST((ss.str("24680 false 1234567890 "),deser.load(d) == Error::NoError))
 		TEST(d == d2)
 
+		TEST((ss.str("24680218638126382163812821782121312312 false 1234567890 "),deser.load(d) == Error::CorruptedArchive))
+		TEST((ss.str("24680 false -1234567890 "),deser.load(d) == Error::CorruptedArchive))
 		TEST((ss.str(""),deser.load(d) == Error::CorruptedArchive))
 		TEST((ss.str("1 1 1"),deser.load(d) == Error::CorruptedArchive))		
 		TEST((ss.str("true"),deser.load(d) == Error::CorruptedArchive))
+		TEST((ss.str("true true true "),deser.load(d) == Error::CorruptedArchive))
 	TESTS_END
 }
 
@@ -119,7 +122,7 @@ void Test2() {
 	TESTS_END
 }
 
-void TestAll() {
+void TestAll() {	
 	Test0();
 
 	Test1();

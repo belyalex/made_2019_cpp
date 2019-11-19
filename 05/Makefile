@@ -1,5 +1,5 @@
 CC = g++
-ccflags = -c -std=c++14 -O2
+ccflags = -c -std=c++17 -O2
 
 all: test
 
