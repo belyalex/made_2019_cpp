@@ -48,7 +48,7 @@ BigInt& BigInt::operator=(const BigInt& value)
 	capacity = value.capacity;
 	size = value.size;	
 
-	delete buffer;
+	delete[] buffer;
 	buffer = new_buf;
 	std::memcpy(&buffer[capacity - size], &value.buffer[capacity - size], size);
 
@@ -60,7 +60,7 @@ BigInt& BigInt::operator=(BigInt&& value)
 {
 	if (this == &value) return *this;
 
-	delete buffer;
+	delete[] buffer;
 	buffer = value.buffer;
 	capacity = value.capacity;
 	size = value.size;
