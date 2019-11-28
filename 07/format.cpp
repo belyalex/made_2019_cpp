@@ -36,13 +36,7 @@ std::string subst(const std::string &fmt, const std::vector<std::string> &string
     return res;
 }
 
-std::string collect_params(const std::string &fmt, std::vector<std::string> &strings) {
-    return subst(fmt, strings);
-}
+void collect_params(const std::string &fmt, std::vector<std::string> &strings) {
 
-std::string format(const std::string &fmt) {
-    std::vector<std::string> strings;
-    return subst(fmt, strings);
 }
-
 

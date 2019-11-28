@@ -18,20 +18,19 @@ std::string to_string(T&& t) {
 
 std::string subst(const std::string &fmt, const std::vector<std::string> &strings);
 
-std::string collect_params(const std::string &fmt, std::vector<std::string> &strings);
+void collect_params(const std::string &fmt, std::vector<std::string> &strings);
 
 template<typename Arg, typename ... Args>
-std::string collect_params(const std::string &fmt, std::vector<std::string> &strings, Arg &&arg, Args &&... args) {
+void collect_params(const std::string &fmt, std::vector<std::string> &strings, Arg &&arg, Args &&... args) {
     strings.push_back(to_string(std::forward<Arg>(arg)));
-    return collect_params(fmt, strings, std::forward<Args>(args) ...);
+    collect_params(fmt, strings, std::forward<Args>(args) ...);
 }
-
-std::string format(const std::string &fmt);
 
 template<typename ... Args>
 std::string format(const std::string &fmt, Args &&... args) {
     std::vector<std::string> strings;
-    return collect_params(fmt, strings, std::forward<Args>(args) ...);
+    collect_params(fmt, strings, std::forward<Args>(args) ...);
+    return subst(fmt, strings);
 }
 
 #endif //FORMAT_H
